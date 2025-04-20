@@ -6,3 +6,12 @@ export type Image = {
   url: string
   width: number
 }
+
+export type ImageVals = {
+  id: boolean
+  height: boolean
+  ratio: boolean
+  type: boolean
+  url: boolean
+  width: boolean
+}
