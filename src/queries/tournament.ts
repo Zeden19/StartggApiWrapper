@@ -1,16 +1,33 @@
 import {getClient} from "../client";
 import {TournamentConnection, TournamentConnectionVals, TournamentFilter, TournamentPage, TournamentSort} from "./types/tournament";
 
-const parseQuery = (object: object) => {
+function parseQuery(object: object): string {
   return Object.entries(object)
     .map(([key, value]) => {
-      const formattedValue = typeof value === "string" ? `"${value}"` : value;
-      return `${key}: ${formattedValue}`;
+      if (typeof value === "string") return `${key}: "${value}"`;
+      else if (typeof value === "object") {
+        const nestedQuery = parseQuery(value);
+        return `${key}: {${nestedQuery}}`;
+      } else return `${key}: ${value}`;
     }).join(", ");
-};
+}
 
-const parseNode = (object: object) => {
-  return Object.keys(object).join(" ");
+function parseNode(object: object): string {
+  return Object.entries(object).map(([key, value]) => {
+    if (typeof value === "object" && value !== null) {
+      const args = Object.entries(value)
+        .filter(([_, v]) => typeof v !== "object")
+        .map(([k, v]) => `${k}: ${typeof v === "string" ? `"${v}"` : v}`)
+        .join(", ");
+      const nestedNode = Object.entries(value)
+        .filter(([_, v]) => typeof v === "object")
+        .map(([_, v]) => parseNode(<object>v))
+        .join(" ");
+      return `${key}(${args}) {${nestedNode}}`;
+    } else {
+      return `${key}`;
+    }
+  }).join(" ");
 }
 
 export async function getTournament({pageQuery, filters, sort, returnVals}: {

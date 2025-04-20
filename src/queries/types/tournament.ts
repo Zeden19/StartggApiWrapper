@@ -1,11 +1,11 @@
 import {User, UserVals} from "./user";
 import {Wave, WaveVals} from "./wave";
 import {_Event, EventFilter, EventVals} from "./event";
-import {Participant, ParticipantConnection, ParticipantQuery, ParticipantVals} from "./participant";
+import {ParticipantConnection, ParticipantQuery, ParticipantVals} from "./participant";
 import {Image, ImageVals} from "./image";
-import {Station, StationsConnection, StationVals} from "./stations";
+import {StationsConnection, StationVals} from "./stations";
 import {StreamQueue, Streams} from "./stream";
-import {Team, TeamConnection, TeamQuery, TeamVals} from "./team";
+import {TeamConnection, TeamQuery, TeamVals} from "./team";
 import {PageInfo, PageInfoVals} from "./pageInfo";
 
 /**
@@ -96,7 +96,7 @@ export type TournamentVals = {
   hasOnlineEvents: boolean
   isOnline: boolean
   hashtag: boolean
-  images: { type: "thumbnail" | "banner", imageVals: ImageVals }
+  images: { type: "profile" | "banner", imageVals: Partial<ImageVals> }
   isRegistrationOpen: boolean
   lat: boolean
   lng: boolean
