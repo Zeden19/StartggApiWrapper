@@ -77,58 +77,110 @@ export type TournamentConnection = {
 }
 
 export type TournamentConnectionVals = {
-  pageInfo: Partial<PageInfoVals>
+  pageInfo: PageInfoVals
   nodes: Partial<TournamentVals>
 }
 
+type TournamentFields =
+  | "id"
+  | "addrState"
+  | "city"
+  | "countryCode"
+  | "createdAt"
+  | "currency"
+  | "endAt"
+  | "eventRegistrationClosedAt"
+  | "hasOfflineEvents"
+  | "hasOnlineEvents"
+  | "isOnline"
+  | "hashtag"
+  | "isRegistrationOpen"
+  | "lat"
+  | "lng"
+  | "mapsPlaceId"
+  | "name"
+  | "numAttendees"
+  | "postalCode"
+  | "primaryContact"
+  | "primaryContactType"
+  | "registrationClosesAt"
+  | "rules"
+  | "shortSlug"
+  | "slug"
+  | "startAt"
+  | "state"
+  | "teamCreationClosesAt"
+  | "timezone"
+  | "tournamentType"
+  | "updatedAt"
+  | "venueAddress"
+  | "venueName";
+
 export type TournamentVals = {
-  id: boolean
-  addrState: boolean
-  admins: { roles: "administrator" | "owner", userVals: UserVals }
-  city: boolean
-  countryCode: boolean
-  createdAt: boolean
-  currency: boolean
-  endAt: boolean
-  eventRegistrationClosedAt: boolean
-  events: { limit: number, filter: EventFilter, eventVals: EventVals }
-  hasOfflineEvents: boolean
-  hasOnlineEvents: boolean
-  isOnline: boolean
-  hashtag: boolean
-  images: { type: "profile" | "banner", imageVals: Partial<ImageVals> }
-  isRegistrationOpen: boolean
-  lat: boolean
-  lng: boolean
-  mapsPlaceId: boolean
-  links: TournamentLinks
-  name: boolean
-  numAttendees: boolean
-  owner: User
-  participants: { query: ParticipantQuery, isAdmin: boolean, participantVals: ParticipantVals }
-  postalCode: boolean
-  primaryContact: boolean
-  primaryContactType: boolean
-  publishing: JSON
-  registrationClosesAt: boolean
-  rules: boolean
-  shortSlug: boolean
-  slug: boolean
-  startAt: boolean
-  state: boolean
-  stations: { page: boolean, perPage: boolean, stationsVals: StationVals }
-  streamQueue: [StreamQueue]
-  streams: [Streams]
-  teamCreationClosesAt: boolean
-  teams: { query: TeamQuery, teamVals: TeamVals }
-  timezone: boolean
-  tournamentType: boolean // needs docs
-  updatedAt: boolean
-  url: { tab: string, relative: boolean }
-  venueAddress: boolean
-  venueName: boolean
-  waves: WaveVals
-}
+  /** Scalar fields you want to return */
+  fields?: readonly TournamentFields[];
+  
+  /** Nested: admins */
+  admins?: {
+    filter: { roles: "administrator" | "owner" };
+    return: UserVals;
+  };
+  
+  /** Nested: events */
+  events?: {
+    filter: EventFilter & { limit?: number };
+    return: EventVals;
+  };
+  
+  /** Nested: images */
+  images?: {
+    filter: { type: "profile" | "banner" };
+    return: readonly (keyof ImageVals)[];
+  };
+  
+  /** Nested: links */
+  links?: TournamentLinks;
+  
+  /** Nested: owner */
+  owner?: UserVals;
+  
+  /** Nested: participants */
+  participants?: {
+    filter: ParticipantQuery & { isAdmin?: boolean };
+    return: ParticipantVals;
+  };
+  
+  /** Nested: stations */
+  stations?: {
+    pagination?: { page: boolean; perPage: boolean };
+    return: StationVals;
+  };
+  
+  /** Nested: streamQueue */
+  streamQueue?: readonly StreamQueue[];
+  
+  /** Nested: streams */
+  streams?: readonly Streams[];
+  
+  /** Nested: teams */
+  teams?: {
+    filter: TeamQuery;
+    return: TeamVals;
+  };
+  
+  /** Nested: url */
+  url?: {
+    filter?: { tab?: string };
+    return: readonly ["relative"];
+  };
+  
+  /** Nested: waves */
+  waves?: WaveVals;
+  
+  /** Misc: publishing */
+  publishing?: JSON;
+};
+
 
 export type Tournament = {
   id: string

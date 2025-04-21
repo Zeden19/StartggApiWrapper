@@ -1,5 +1,6 @@
 import {getClient} from "../client";
 import {TournamentConnection, TournamentConnectionVals, TournamentFilter, TournamentPage, TournamentSort} from "./types/tournament";
+import {PageInfoVals} from "./types/pageInfo";
 
 function parseQuery(object: object): string {
   return Object.entries(object)
@@ -13,21 +14,26 @@ function parseQuery(object: object): string {
 }
 
 function parseNode(object: object): string {
+  if (Array.isArray(object)) {return object.join(" ")}
   return Object.entries(object).map(([key, value]) => {
+    if (Array.isArray(value)) {
+      return value.join(" ");
+    }
     if (typeof value === "object" && value !== null) {
-      const args = Object.entries(value)
-        .filter(([_, v]) => typeof v !== "object")
-        .map(([k, v]) => `${k}: ${typeof v === "string" ? `"${v}"` : v}`)
-        .join(", ");
+      const args = value.filter ? `(${Object.entries(value.filter).map(([k, v]) => `${k}: ${typeof v === "string" ? `"${v}"` : v}`).join(", ")})` : '';
       const nestedNode = Object.entries(value)
-        .filter(([_, v]) => typeof v === "object")
+        .filter(([k, v]) => typeof v === "object" && k !== "filter")
         .map(([_, v]) => parseNode(<object>v))
         .join(" ");
-      return `${key}(${args}) {${nestedNode}}`;
+      return `${key}${args} {${nestedNode}}`;
     } else {
       return `${key}`;
     }
   }).join(" ");
+}
+
+function parsePageInfo(pageInfo: PageInfoVals): string {
+  return pageInfo.join(" ");
 }
 
 export async function getTournament({pageQuery, filters, sort, returnVals}: {
@@ -40,16 +46,16 @@ export async function getTournament({pageQuery, filters, sort, returnVals}: {
   const client = getClient();
   
   const tournamentParams = `query: {
-   ${pageQuery !== undefined ? parseQuery(pageQuery) + ', ' : ''}
+   ${pageQuery !== undefined ? `${parseQuery(pageQuery)}, ` : ''}
    ${filters !== undefined ? `filter: {${parseQuery(filters)}}, ` : ''}
    ${sort !== undefined ? `sort: ${sort}` : ''}}`
   
-  const toReturn = `${returnVals?.pageInfo !== undefined ? `pageInfo {${parseNode(returnVals.pageInfo)}}` : ''}
+  const returnParams = `${returnVals?.pageInfo !== undefined ? `pageInfo {${parsePageInfo(returnVals.pageInfo)}}` : ''}
                     ${returnVals?.nodes !== undefined ? `nodes {${parseNode(returnVals.nodes)}}` : ''}`
   
   const queryString = `query TournamentQuery {
     tournaments(${tournamentParams})
-    {${toReturn}}}`
+    {${returnParams}}}`
   
   return {data: await client.request(queryString), query: queryString}
 }

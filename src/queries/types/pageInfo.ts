@@ -5,14 +5,7 @@ export type PageInfo = {
   perPage: number
   sortBy: string
   filter: JSON
-  
 }
 
-export type PageInfoVals = {
-  total: boolean
-  totalPages: boolean
-  page: boolean
-  perPage: boolean
-  sortBy: boolean
-  filter: boolean
-}
+type PageInfoFields = "total" | "totalPages" | "page" | "perPage" | "sortBy" | "filter"
+export type PageInfoVals = readonly PageInfoFields[]
