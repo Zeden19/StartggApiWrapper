@@ -7,27 +7,19 @@ dotenv.config();
 setApiKey(process.env.apiKey);
 
 const {query, data: {tournaments}} = await getTournament({
-  sort: "eventRegistrationClosesAt",
-  filters: {name: "Don't Sleep On Me", published: true,},
+  sort: "startAt",
+  filters: {name: "Don't Sleep On Me 3!", published: true, hasOnlineEvents: false},
   pageQuery: {perPage: 5, page: 1},
   
   returnVals: {
-    pageInfo: ["totalPages", "sortBy", "total", "page", "filter"],
     nodes: {
-      fields: ["id", "name", "venueAddress", "mapsPlaceId", "lat", "lng"],
+      fields: ["id", "name", "venueAddress", "mapsPlaceId", "lat", "lng", "numAttendees"],
       images: {
         filter: {type: "profile"},
         return: ["type", "url", "height", "ratio", "width"]
       },
-      owner: {
-        return: ["id", "name"],
-      },
-      admins: {
-        filter: {roles: "owner"},
-        return: ["name"]
-      }
     }
   }
-})
-console.log(query)
-console.log(tournaments?.nodes)
+});
+console.log(query);
+console.log(tournaments?.nodes);

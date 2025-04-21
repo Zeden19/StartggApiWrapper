@@ -30,12 +30,6 @@ export type TournamentLinks = {
 
 export type TournamentSort = "startAt" | "endAt" | "eventRegistrationClosesAt" | "computedUpdatedAt"
 
-export type TournamentPage = {
-  page: number
-  perPage: number
-  sortBy: string
-}
-
 /**
  * @param id tournament id
  * @param ids list of tournament ids*/
@@ -147,7 +141,7 @@ export type TournamentVals = {
   /** Nested: participants */
   participants?: {
     filter: ParticipantQuery & { isAdmin?: boolean };
-    return: ParticipantVals;
+    return?: ParticipantVals;
   };
   
   /** Nested: stations */
@@ -180,7 +174,6 @@ export type TournamentVals = {
   /** Misc: publishing */
   publishing?: JSON;
 };
-
 
 export type Tournament = {
   id: string

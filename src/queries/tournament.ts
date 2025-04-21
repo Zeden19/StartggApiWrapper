@@ -1,6 +1,6 @@
 import {getClient} from "../client";
-import {TournamentConnection, TournamentConnectionVals, TournamentFilter, TournamentPage, TournamentSort} from "./types/tournament";
-import {PageInfoVals} from "./types/pageInfo";
+import {TournamentConnection, TournamentConnectionVals, TournamentFilter, TournamentSort} from "./types/tournament";
+import {PageInfoVals, PageQuery} from "./types/pageInfo";
 
 function parseQuery(object: object): string {
   return Object.entries(object)
@@ -37,7 +37,7 @@ function parsePageInfo(pageInfo: PageInfoVals): string {
 }
 
 export async function getTournament({pageQuery, filters, sort, returnVals}: {
-  pageQuery?: Partial<TournamentPage>,
+  pageQuery?: Partial<PageQuery>,
   filters?: Partial<TournamentFilter>,
   returnVals?: Partial<TournamentConnectionVals>,
   sort?: TournamentSort

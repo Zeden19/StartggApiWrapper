@@ -9,3 +9,9 @@ export type PageInfo = {
 
 type PageInfoFields = "total" | "totalPages" | "page" | "perPage" | "sortBy" | "filter"
 export type PageInfoVals = readonly PageInfoFields[]
+
+export type PageQuery = {
+  page: number
+  perPage: number
+  sortBy: string
+}
