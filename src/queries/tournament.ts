@@ -1,6 +1,11 @@
 import {getClient} from "../client";
 import {TournamentConnection, TournamentConnectionVals, TournamentFilter, TournamentSort} from "./types/tournament";
 import {PageInfoVals, PageQuery} from "./types/pageInfo";
+import {isEmptyObject} from "../utlities/EmptyObject";
+
+function returnString(value: string): string {
+  return value.toUpperCase() === value ? value : `"${value}"`;
+}
 
 function parseQuery(object: object): string {
   return Object.entries(object)
@@ -14,30 +19,33 @@ function parseQuery(object: object): string {
 }
 
 function parseNode(object: object): string {
-  if (Array.isArray(object)) {return object.join(" ")}
   return Object.entries(object).map(([key, value]) => {
-    if (Array.isArray(value)) {
-      return value.join(" ");
-    }
-    if (typeof value === "object" && value !== null) {
-      const args = value.filter ? `(${Object.entries(value.filter).map(([k, v]) => `${k}: ${typeof v === "string" ? `"${v}"` : v}`).join(", ")})` : '';
-      const nestedNode = Object.entries(value)
-        .filter(([k, v]) => typeof v === "object" && k !== "filter")
-        .map(([_, v]) => parseNode(<object>v))
-        .join(" ");
-      return `${key}${args} {${nestedNode}}`;
+    if (isEmptyObject(value)) return `${key}`;
+    
+    // if both returnVals not exist, then everything will be an emptyObject
+    else if (!value.returnVals) {
+      return `${key} {${Object.keys(value).join(" ")}}\n`;
+      
     } else {
-      return `${key}`;
+      const filters = Object.entries(value).filter(([key]) => key !== "returnVals").map(([key, value]) => {
+        if (Array.isArray(value)) {
+          return `${key}: [${value.map((val) => `${returnString(val)}`).join(", ")}]`
+        } else return `${key}: ${returnString(<string>value)}`;
+      }).join(", ");
+      
+      const returnVals = parseNode(value.returnVals);
+      
+      return `${key}(${filters}) {${returnVals}}\n`;
     }
   }).join(" ");
 }
 
 function parsePageInfo(pageInfo: PageInfoVals): string {
-  return pageInfo.join(" ");
+  return Object.keys(pageInfo).join(" ")
 }
 
-export async function getTournament({pageQuery, filters, sort, returnVals}: {
-  pageQuery?: Partial<PageQuery>,
+export async function getTournament({page, filters, sort, returnVals}: {
+  page?: Partial<PageQuery>,
   filters?: Partial<TournamentFilter>,
   returnVals?: Partial<TournamentConnectionVals>,
   sort?: TournamentSort
@@ -46,7 +54,7 @@ export async function getTournament({pageQuery, filters, sort, returnVals}: {
   const client = getClient();
   
   const tournamentParams = `query: {
-   ${pageQuery !== undefined ? `${parseQuery(pageQuery)}, ` : ''}
+   ${page !== undefined ? `${parseQuery(page)}, ` : ''}
    ${filters !== undefined ? `filter: {${parseQuery(filters)}}, ` : ''}
    ${sort !== undefined ? `sort: ${sort}` : ''}}`
   

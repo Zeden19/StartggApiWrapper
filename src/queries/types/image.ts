@@ -1,3 +1,5 @@
+import emptyObject from "../../utlities/EmptyObject";
+
 export type Image = {
   id: string
   height: number
@@ -7,11 +9,17 @@ export type Image = {
   width: number
 }
 
-export type ImageVals = {
-  id: boolean
-  height: boolean
-  ratio: boolean
-  type: boolean
-  url: boolean
-  width: boolean
+
+type ImageVals = {
+  id?: emptyObject,
+  height?: emptyObject,
+  ratio?: emptyObject,
+  type?: emptyObject,
+  url?: emptyObject,
+  width?: emptyObject
+}
+
+export type ImageNode = {
+  returnVals?: ImageVals,
+  type?: "profile" | "banner"
 }

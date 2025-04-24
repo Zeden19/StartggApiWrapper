@@ -8,18 +8,28 @@ setApiKey(process.env.apiKey);
 
 const {query, data: {tournaments}} = await getTournament({
   sort: "startAt",
-  filters: {name: "Don't Sleep On Me 3!", published: true, hasOnlineEvents: false},
-  pageQuery: {perPage: 5, page: 1},
-  
+  filters: {name: "Don't Sleep On me"},
+  page: {perPage: 5, page: 1},
   returnVals: {
+    pageInfo: {page: {}, totalPages: {}},
     nodes: {
-      fields: ["id", "name", "venueAddress", "mapsPlaceId", "lat", "lng", "numAttendees"],
+      id: {}, name: {}, lat: {}, lng: {}, mapsPlaceId: {},
       images: {
-        filter: {type: "profile"},
-        return: ["type", "url", "height", "ratio", "width"]
+        type: "banner",
+        returnVals: {type: {}, width: {}}
       },
+      admins: {
+        roles: ["owner"],
+        returnVals: {
+          name: {}, id: {},
+          location: {id: {}, city: {}},
+          authorizations: {types: ["DISCORD"], returnVals: {type: {}, id: {}}},
+          images: {type: "banner", returnVals: {type: {}, width: {}}}
+        },
+      }
     }
   }
 });
 console.log(query);
-console.log(tournaments?.nodes);
+
+console.log(tournaments);

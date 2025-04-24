@@ -1,17 +1,25 @@
+import emptyObject from "../../utlities/EmptyObject";
+
 export type PageInfo = {
-  total: number
-  totalPages: number
-  page: number
-  perPage: number
-  sortBy: string
-  filter: JSON
+  total?: number
+  totalPages?: number
+  page?: number
+  perPage?: number
+  sortBy?: string
+  filter?: JSON
 }
 
-type PageInfoFields = "total" | "totalPages" | "page" | "perPage" | "sortBy" | "filter"
-export type PageInfoVals = readonly PageInfoFields[]
+export type PageInfoVals = {
+  total?: emptyObject,
+  totalPages?: emptyObject,
+  page?: emptyObject,
+  perPage?: emptyObject,
+  sortBy?: emptyObject,
+  filter?: emptyObject
+}
 
 export type PageQuery = {
-  page: number
-  perPage: number
-  sortBy: string
+  page?: number
+  perPage?: number
+  sortBy?: string
 }

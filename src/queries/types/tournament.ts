@@ -2,11 +2,13 @@ import {User, UserVals} from "./user";
 import {Wave, WaveVals} from "./wave";
 import {_Event, EventFilter, EventVals} from "./event";
 import {ParticipantConnection, ParticipantQuery, ParticipantVals} from "./participant";
-import {Image, ImageVals} from "./image";
+import {Image, ImageNode} from "./image";
 import {StationsConnection, StationVals} from "./stations";
-import {StreamQueue, Streams} from "./stream";
+import {StreamQueue, Stream} from "./stream";
 import {TeamConnection, TeamQuery, TeamVals} from "./team";
 import {PageInfo, PageInfoVals} from "./pageInfo";
+import {Streams} from "./streams";
+import emptyObject from "../../utlities/EmptyObject";
 
 /**
  * @param distanceFrom distance from Latitude, Longitude (ex. 37, 29)
@@ -23,10 +25,7 @@ export type TopGameFilter = {
   gameNums?: [number]
 }
 
-export type TournamentLinks = {
-  facebook: string
-  discord: string
-}
+export type TournamentLinks = "facebook" | "discord"
 
 export type TournamentSort = "startAt" | "endAt" | "eventRegistrationClosesAt" | "computedUpdatedAt"
 
@@ -66,7 +65,7 @@ export type TournamentFilter = {
 export type TournamentConnection = {
   tournaments: {
     pageInfo: PageInfo
-    nodes: [Tournament]
+    nodes: Tournament[]
   }
 }
 
@@ -75,65 +74,60 @@ export type TournamentConnectionVals = {
   nodes: Partial<TournamentVals>
 }
 
-type TournamentFields =
-  | "id"
-  | "addrState"
-  | "city"
-  | "countryCode"
-  | "createdAt"
-  | "currency"
-  | "endAt"
-  | "eventRegistrationClosedAt"
-  | "hasOfflineEvents"
-  | "hasOnlineEvents"
-  | "isOnline"
-  | "hashtag"
-  | "isRegistrationOpen"
-  | "lat"
-  | "lng"
-  | "mapsPlaceId"
-  | "name"
-  | "numAttendees"
-  | "postalCode"
-  | "primaryContact"
-  | "primaryContactType"
-  | "registrationClosesAt"
-  | "rules"
-  | "shortSlug"
-  | "slug"
-  | "startAt"
-  | "state"
-  | "teamCreationClosesAt"
-  | "timezone"
-  | "tournamentType"
-  | "updatedAt"
-  | "venueAddress"
-  | "venueName";
 
 export type TournamentVals = {
   /** Scalar fields you want to return */
-  fields?: readonly TournamentFields[];
+  id?: emptyObject;
+  addrState?: emptyObject;
+  city?: emptyObject;
+  countryCode?: emptyObject;
+  createdAt?: emptyObject;
+  currency?: emptyObject;
+  endAt?: emptyObject;
+  eventRegistrationClosedAt?: emptyObject;
+  hasOfflineEvents?: emptyObject;
+  hasOnlineEvents?: emptyObject;
+  isOnline?: emptyObject;
+  hashtag?: emptyObject;
+  isRegistrationOpen?: emptyObject;
+  lat?: emptyObject;
+  lng?: emptyObject;
+  mapsPlaceId?: emptyObject;
+  name?: emptyObject;
+  numAttendees?: emptyObject;
+  postalCode?: emptyObject;
+  primaryContact?: emptyObject;
+  primaryContactType?: emptyObject;
+  registrationClosesAt?: emptyObject;
+  rules?: emptyObject;
+  shortSlug?: emptyObject;
+  slug?: emptyObject;
+  startAt?: emptyObject;
+  state?: emptyObject;
+  teamCreationClosesAt?: emptyObject;
+  timezone?: emptyObject;
+  tournamentType?: emptyObject;
+  updatedAt?: emptyObject;
+  venueAddress?: emptyObject;
+  venueName?: emptyObject;
   
   /** Nested: admins */
   admins?: {
-    filter: { roles: "administrator" | "owner" };
-    return: UserVals;
+    roles:("administrator" | "owner") [];
+    returnVals: UserVals;
   };
   
   /** Nested: events */
   events?: {
     filter: EventFilter & { limit?: number };
-    return: EventVals;
+    returnVals: EventVals;
   };
   
-  /** Nested: images */
-  images?: {
-    filter: { type: "profile" | "banner" };
-    return: readonly (keyof ImageVals)[];
-  };
+  /** Nested: images; might need to change depending on images on different things (ex. user) */
+  images?: ImageNode;
   
   /** Nested: links */
-  links?: TournamentLinks;
+  links?: readonly TournamentLinks[];
   
   /** Nested: owner */
   owner?: UserVals;
@@ -141,31 +135,31 @@ export type TournamentVals = {
   /** Nested: participants */
   participants?: {
     filter: ParticipantQuery & { isAdmin?: boolean };
-    return?: ParticipantVals;
+    returnVals?: ParticipantVals;
   };
   
   /** Nested: stations */
   stations?: {
     pagination?: { page: boolean; perPage: boolean };
-    return: StationVals;
+    returnVals: StationVals;
   };
   
   /** Nested: streamQueue */
   streamQueue?: readonly StreamQueue[];
   
   /** Nested: streams */
-  streams?: readonly Streams[];
+  streams?: readonly Stream[];
   
   /** Nested: teams */
   teams?: {
     filter: TeamQuery;
-    return: TeamVals;
+    returnVals: TeamVals;
   };
   
   /** Nested: url */
   url?: {
     filter?: { tab?: string };
-    return: readonly ["relative"];
+    returnVals: readonly ["relative"];
   };
   
   /** Nested: waves */
@@ -185,12 +179,12 @@ export type Tournament = {
   currency: string
   endAt: number
   eventRegistrationClosedAt: number
-  events: [_Event]
+  events: _Event[]
   hasOfflineEvents: boolean
   hasOnlineEvents: boolean
   isOnline: boolean
   hashtag: string
-  images: [Image]
+  images: Image[]
   isRegistrationOpen: boolean
   lat: number
   lng: number
@@ -211,8 +205,8 @@ export type Tournament = {
   startAt: number
   state: number
   stations: StationsConnection
-  streamQueue: [StreamQueue]
-  streams: [Streams]
+  streamQueue: StreamQueue[]
+  streams: Streams[]
   teamCreationClosesAt: number
   teams: TeamConnection
   timezone: string
@@ -221,5 +215,5 @@ export type Tournament = {
   url: { tab: string, relative: boolean }
   venueAddress: string
   venueName: string
-  waves: [Wave]
+  waves: Wave[]
 }
