@@ -172,7 +172,7 @@ export type TournamentVals = {
 export type Tournament = {
   id: string
   addrState: string
-  admins: [User]
+  admins: User[]
   city: string
   countryCode: string
   createdAt: number

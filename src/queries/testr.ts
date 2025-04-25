@@ -30,6 +30,6 @@ const {query, data: {tournaments}} = await getTournament({
     }
   }
 });
-console.log(query);
 
+console.log(query);
 console.log(tournaments);
